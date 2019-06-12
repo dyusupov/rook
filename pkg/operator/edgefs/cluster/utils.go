@@ -217,7 +217,7 @@ func (c *cluster) createDeploymentConfig(nodes []rookalpha.Node, resurrect bool)
 	}
 
 	// Set privileges==true in case of HostNetwork
-	if len(c.Spec.Network.ServerIfName) > 0 || len(c.Spec.Network.BrokerIfName) > 0 {
+	if edgefsv1beta1.IsHostNetworkDefined(c.Spec.Network) {
 		deploymentConfig.NeedPrivileges = true
 	}
 

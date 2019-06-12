@@ -20,6 +20,7 @@ import (
 	"k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"strings"
 )
 
 // ***************************************************************************
@@ -81,8 +82,46 @@ type DashboardSpec struct {
 }
 
 type NetworkSpec struct {
+	Provider     string `json:"provider"`
 	ServerIfName string `json:"serverIfName"`
 	BrokerIfName string `json:"brokerIfName"`
+}
+
+func IsHostNetworkDefined(networkSpec NetworkSpec) bool {
+	// backward compat
+	if len(networkSpec.Provider) == 0 && len(networkSpec.ServerIfName) > 0 {
+		return true
+	}
+	if len(networkSpec.Provider) > 0 && networkSpec.Provider == "host" && len(networkSpec.ServerIfName) > 0 {
+		return true
+	}
+	return false
+}
+
+func IsMultusNetworkDefined(networkSpec NetworkSpec) bool {
+	if len(networkSpec.Provider) > 0 && networkSpec.Provider == "multus" {
+		return true
+	}
+	return false
+}
+
+func GetMultusIfName(multusName string) string {
+	var ifName string
+	multusNameComponents := strings.Split(multusName, "@")
+	if len(multusNameComponents) == 2 {
+		ifName = multusNameComponents[1]
+	} else {
+		ifName = "net1"
+	}
+	return ifName
+}
+
+func ApplyMultus(networkSpec NetworkSpec, objectMeta *metav1.ObjectMeta) {
+	t := rook.Annotations{
+		"foo":   "bar",
+		"hello": "world",
+	}
+	t.ApplyToObjectMeta(objectMeta)
 }
 
 type ClusterState string

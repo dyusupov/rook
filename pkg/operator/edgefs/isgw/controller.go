@@ -54,7 +54,7 @@ var ISGWResource = opkit.CustomResource{
 type ISGWController struct {
 	context         *clusterd.Context
 	rookImage       string
-	hostNetwork     bool
+	NetworkSpec     edgefsv1beta1.NetworkSpec
 	dataDirHostPath string
 	dataVolumeSize  resource.Quantity
 	annotations     rookalpha.Annotations
@@ -67,7 +67,7 @@ type ISGWController struct {
 // NewISGWController create controller for watching ISGW custom resources created
 func NewISGWController(
 	context *clusterd.Context, rookImage string,
-	hostNetwork bool,
+	NetworkSpec edgefsv1beta1.NetworkSpec,
 	dataDirHostPath string,
 	dataVolumeSize resource.Quantity,
 	placement rookalpha.Placement,
@@ -78,7 +78,7 @@ func NewISGWController(
 	return &ISGWController{
 		context:         context,
 		rookImage:       rookImage,
-		hostNetwork:     hostNetwork,
+		NetworkSpec:     NetworkSpec,
 		dataDirHostPath: dataDirHostPath,
 		dataVolumeSize:  dataVolumeSize,
 		placement:       placement,

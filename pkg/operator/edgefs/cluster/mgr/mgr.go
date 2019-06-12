@@ -66,7 +66,7 @@ type Cluster struct {
 	annotations     rookalpha.Annotations
 	placement       rookalpha.Placement
 	context         *clusterd.Context
-	hostNetworkSpec edgefsv1beta1.NetworkSpec
+	NetworkSpec     edgefsv1beta1.NetworkSpec
 	dashboardSpec   edgefsv1beta1.DashboardSpec
 	resources       v1.ResourceRequirements
 	resourceProfile string
@@ -81,7 +81,7 @@ func New(
 	dataVolumeSize resource.Quantity,
 	annotations rookalpha.Annotations,
 	placement rookalpha.Placement,
-	hostNetworkSpec edgefsv1beta1.NetworkSpec,
+	NetworkSpec edgefsv1beta1.NetworkSpec,
 	dashboardSpec edgefsv1beta1.DashboardSpec,
 	resources v1.ResourceRequirements,
 	resourceProfile string,
@@ -104,19 +104,12 @@ func New(
 		Replicas:        1,
 		dataDirHostPath: dataDirHostPath,
 		dataVolumeSize:  dataVolumeSize,
-		hostNetworkSpec: hostNetworkSpec,
+		NetworkSpec:     NetworkSpec,
 		dashboardSpec:   dashboardSpec,
 		resources:       resources,
 		resourceProfile: resourceProfile,
 		ownerRef:        ownerRef,
 	}
-}
-
-func isHostNetworkDefined(hostNetworkSpec edgefsv1beta1.NetworkSpec) bool {
-	if len(hostNetworkSpec.ServerIfName) > 0 || len(hostNetworkSpec.ServerIfName) > 0 {
-		return true
-	}
-	return false
 }
 
 // Start the mgr instance
@@ -321,22 +314,26 @@ func (c *Cluster) makeDeployment(name, clusterName, rookImage string, replicas i
 			RestartPolicy: v1.RestartPolicyAlways,
 			Volumes:       volumes,
 			HostIPC:       true,
-			HostNetwork:   isHostNetworkDefined(c.hostNetworkSpec),
+			HostNetwork:   edgefsv1beta1.IsHostNetworkDefined(c.NetworkSpec),
 			NodeSelector:  map[string]string{c.Namespace: "cluster"},
 		},
 	}
-	if isHostNetworkDefined(c.hostNetworkSpec) {
+	if edgefsv1beta1.IsHostNetworkDefined(c.NetworkSpec) {
 		podSpec.Spec.DNSPolicy = v1.DNSClusterFirstWithHostNet
 	}
-	// Add the prometheus.io scrape annoations by default when no annotations have been given.
-	if len(c.annotations) == 0 {
-		podSpec.ObjectMeta.Annotations = map[string]string{
-			"prometheus.io/scrape": "true",
-			"prometheus.io/port":   strconv.Itoa(defaultMetricsPort),
-		}
-	} else {
-		c.annotations.ApplyToObjectMeta(&podSpec.ObjectMeta)
+	// Add the prometheus.io scrape annoations by default
+	podSpec.ObjectMeta.Annotations = map[string]string{
+		"prometheus.io/scrape": "true",
+		"prometheus.io/port":   strconv.Itoa(defaultMetricsPort),
 	}
+	if edgefsv1beta1.IsMultusNetworkDefined(c.NetworkSpec) {
+		edgefsv1beta1.ApplyMultus(c.NetworkSpec, &podSpec.ObjectMeta)
+	}
+
+	if edgefsv1beta1.IsMultusNetworkDefined(c.NetworkSpec) {
+		edgefsv1beta1.ApplyMultus(c.NetworkSpec, &podSpec.ObjectMeta)
+	}
+	c.annotations.ApplyToObjectMeta(&podSpec.ObjectMeta)
 	c.placement.ApplyToPodSpec(&podSpec.Spec)
 
 	d := &apps.Deployment{

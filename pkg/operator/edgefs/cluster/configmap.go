@@ -49,8 +49,7 @@ func (c *cluster) createClusterConfigMap(nodes []rookalpha.Node, deploymentConfi
 
 	serverIfName := defaultServerIfName
 	brokerIfName := defaultBrokerIfName
-	if isHostNetworkDefined(c.Spec.Network) {
-
+	if edgefsv1beta1.IsHostNetworkDefined(c.Spec.Network) {
 		if len(c.Spec.Network.ServerIfName) > 0 && len(c.Spec.Network.BrokerIfName) > 0 {
 			serverIfName = c.Spec.Network.ServerIfName
 			brokerIfName = c.Spec.Network.BrokerIfName
@@ -60,6 +59,17 @@ func (c *cluster) createClusterConfigMap(nodes []rookalpha.Node, deploymentConfi
 		} else if len(c.Spec.Network.BrokerIfName) > 0 {
 			serverIfName = c.Spec.Network.BrokerIfName
 			brokerIfName = c.Spec.Network.BrokerIfName
+		}
+	} else if edgefsv1beta1.IsMultusNetworkDefined(c.Spec.Network) {
+		if len(c.Spec.Network.ServerIfName) > 0 && len(c.Spec.Network.BrokerIfName) > 0 {
+			serverIfName = edgefsv1beta1.GetMultusIfName(c.Spec.Network.ServerIfName)
+			brokerIfName = edgefsv1beta1.GetMultusIfName(c.Spec.Network.BrokerIfName)
+		} else if len(c.Spec.Network.ServerIfName) > 0 {
+			serverIfName = edgefsv1beta1.GetMultusIfName(c.Spec.Network.ServerIfName)
+			brokerIfName = edgefsv1beta1.GetMultusIfName(c.Spec.Network.ServerIfName)
+		} else if len(c.Spec.Network.BrokerIfName) > 0 {
+			serverIfName = edgefsv1beta1.GetMultusIfName(c.Spec.Network.BrokerIfName)
+			brokerIfName = edgefsv1beta1.GetMultusIfName(c.Spec.Network.BrokerIfName)
 		}
 	}
 

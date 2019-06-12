@@ -54,7 +54,7 @@ var S3XResource = opkit.CustomResource{
 type S3XController struct {
 	context         *clusterd.Context
 	rookImage       string
-	hostNetwork     bool
+	NetworkSpec     edgefsv1beta1.NetworkSpec
 	dataDirHostPath string
 	dataVolumeSize  resource.Quantity
 	annotations     rookalpha.Annotations
@@ -67,7 +67,7 @@ type S3XController struct {
 // NewS3XController create controller for watching S3X custom resources created
 func NewS3XController(
 	context *clusterd.Context, rookImage string,
-	hostNetwork bool,
+	NetworkSpec edgefsv1beta1.NetworkSpec,
 	dataDirHostPath string,
 	dataVolumeSize resource.Quantity,
 	placement rookalpha.Placement,
@@ -78,7 +78,7 @@ func NewS3XController(
 	return &S3XController{
 		context:         context,
 		rookImage:       rookImage,
-		hostNetwork:     hostNetwork,
+		NetworkSpec:     NetworkSpec,
 		dataDirHostPath: dataDirHostPath,
 		dataVolumeSize:  dataVolumeSize,
 		placement:       placement,

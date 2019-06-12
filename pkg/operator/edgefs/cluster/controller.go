@@ -179,7 +179,7 @@ func (c *ClusterController) onAdd(obj interface{}) {
 
 	// Start NFS service CRD watcher
 	NFSController := nfs.NewNFSController(c.context, c.containerImage,
-		isHostNetworkDefined(cluster.Spec.Network),
+		cluster.Spec.Network,
 		cluster.Spec.DataDirHostPath, cluster.Spec.DataVolumeSize,
 		edgefsv1beta1.GetTargetPlacement(cluster.Spec.Placement),
 		cluster.Spec.Resources,
@@ -189,7 +189,7 @@ func (c *ClusterController) onAdd(obj interface{}) {
 
 	// Start S3 service CRD watcher
 	S3Controller := s3.NewS3Controller(c.context, c.containerImage,
-		isHostNetworkDefined(cluster.Spec.Network),
+		cluster.Spec.Network,
 		cluster.Spec.DataDirHostPath, cluster.Spec.DataVolumeSize,
 		edgefsv1beta1.GetTargetPlacement(cluster.Spec.Placement),
 		cluster.Spec.Resources,
@@ -199,7 +199,7 @@ func (c *ClusterController) onAdd(obj interface{}) {
 
 	// Start SWIFT service CRD watcher
 	SWIFTController := swift.NewSWIFTController(c.context, c.containerImage,
-		isHostNetworkDefined(cluster.Spec.Network),
+		cluster.Spec.Network,
 		cluster.Spec.DataDirHostPath, cluster.Spec.DataVolumeSize,
 		edgefsv1beta1.GetTargetPlacement(cluster.Spec.Placement),
 		cluster.Spec.Resources,
@@ -209,7 +209,7 @@ func (c *ClusterController) onAdd(obj interface{}) {
 
 	// Start S3X service CRD watcher
 	S3XController := s3x.NewS3XController(c.context, c.containerImage,
-		isHostNetworkDefined(cluster.Spec.Network),
+		cluster.Spec.Network,
 		cluster.Spec.DataDirHostPath, cluster.Spec.DataVolumeSize,
 		edgefsv1beta1.GetTargetPlacement(cluster.Spec.Placement),
 		cluster.Spec.Resources,
@@ -219,7 +219,7 @@ func (c *ClusterController) onAdd(obj interface{}) {
 
 	// Start ISCSI service CRD watcher
 	ISCSIController := iscsi.NewISCSIController(c.context, c.containerImage,
-		isHostNetworkDefined(cluster.Spec.Network),
+		cluster.Spec.Network,
 		cluster.Spec.DataDirHostPath, cluster.Spec.DataVolumeSize,
 		edgefsv1beta1.GetTargetPlacement(cluster.Spec.Placement),
 		cluster.Spec.Resources,
@@ -229,7 +229,7 @@ func (c *ClusterController) onAdd(obj interface{}) {
 
 	// Start ISGW service CRD watcher
 	ISGWController := isgw.NewISGWController(c.context, c.containerImage,
-		isHostNetworkDefined(cluster.Spec.Network),
+		cluster.Spec.Network,
 		cluster.Spec.DataDirHostPath, cluster.Spec.DataVolumeSize,
 		edgefsv1beta1.GetTargetPlacement(cluster.Spec.Placement),
 		cluster.Spec.Resources,
@@ -375,13 +375,6 @@ func (c *ClusterController) updateClusterStatus(namespace, name string, state ed
 	}
 
 	return nil
-}
-
-func isHostNetworkDefined(hostNetworkSpec edgefsv1beta1.NetworkSpec) bool {
-	if len(hostNetworkSpec.ServerIfName) > 0 || len(hostNetworkSpec.ServerIfName) > 0 {
-		return true
-	}
-	return false
 }
 
 func (c *ClusterController) addFinalizer(clust *edgefsv1beta1.Cluster) error {

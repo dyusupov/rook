@@ -54,7 +54,7 @@ var NFSResource = opkit.CustomResource{
 type NFSController struct {
 	context         *clusterd.Context
 	rookImage       string
-	hostNetwork     bool
+	NetworkSpec     edgefsv1beta1.NetworkSpec
 	dataDirHostPath string
 	dataVolumeSize  resource.Quantity
 	annotations     rookalpha.Annotations
@@ -67,7 +67,7 @@ type NFSController struct {
 // NewNFSController create controller for watching nfs custom resources created
 func NewNFSController(
 	context *clusterd.Context, rookImage string,
-	hostNetwork bool,
+	NetworkSpec edgefsv1beta1.NetworkSpec,
 	dataDirHostPath string,
 	dataVolumeSize resource.Quantity,
 	placement rookalpha.Placement,
@@ -78,7 +78,7 @@ func NewNFSController(
 	return &NFSController{
 		context:         context,
 		rookImage:       rookImage,
-		hostNetwork:     hostNetwork,
+		NetworkSpec:     NetworkSpec,
 		dataDirHostPath: dataDirHostPath,
 		dataVolumeSize:  dataVolumeSize,
 		placement:       placement,

@@ -54,7 +54,7 @@ var SWIFTResource = opkit.CustomResource{
 type SWIFTController struct {
 	context         *clusterd.Context
 	rookImage       string
-	hostNetwork     bool
+	NetworkSpec     edgefsv1beta1.NetworkSpec
 	dataDirHostPath string
 	dataVolumeSize  resource.Quantity
 	placement       rookalpha.Placement
@@ -66,7 +66,7 @@ type SWIFTController struct {
 // NewSWIFTController create controller for watching SWIFT custom resources created
 func NewSWIFTController(
 	context *clusterd.Context, rookImage string,
-	hostNetwork bool,
+	NetworkSpec edgefsv1beta1.NetworkSpec,
 	dataDirHostPath string,
 	dataVolumeSize resource.Quantity,
 	placement rookalpha.Placement,
@@ -77,7 +77,7 @@ func NewSWIFTController(
 	return &SWIFTController{
 		context:         context,
 		rookImage:       rookImage,
-		hostNetwork:     hostNetwork,
+		NetworkSpec:     NetworkSpec,
 		dataDirHostPath: dataDirHostPath,
 		dataVolumeSize:  dataVolumeSize,
 		placement:       placement,

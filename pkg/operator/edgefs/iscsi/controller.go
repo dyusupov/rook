@@ -54,7 +54,7 @@ var ISCSIResource = opkit.CustomResource{
 type ISCSIController struct {
 	context         *clusterd.Context
 	rookImage       string
-	hostNetwork     bool
+	NetworkSpec     edgefsv1beta1.NetworkSpec
 	dataDirHostPath string
 	dataVolumeSize  resource.Quantity
 	placement       rookalpha.Placement
@@ -67,7 +67,7 @@ type ISCSIController struct {
 // NewISCSIController create controller for watching ISCSI custom resources created
 func NewISCSIController(
 	context *clusterd.Context, rookImage string,
-	hostNetwork bool,
+	NetworkSpec edgefsv1beta1.NetworkSpec,
 	dataDirHostPath string,
 	dataVolumeSize resource.Quantity,
 	placement rookalpha.Placement,
@@ -78,7 +78,7 @@ func NewISCSIController(
 	return &ISCSIController{
 		context:         context,
 		rookImage:       rookImage,
-		hostNetwork:     hostNetwork,
+		NetworkSpec:     NetworkSpec,
 		dataDirHostPath: dataDirHostPath,
 		dataVolumeSize:  dataVolumeSize,
 		placement:       placement,

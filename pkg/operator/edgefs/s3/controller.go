@@ -54,7 +54,7 @@ var S3Resource = opkit.CustomResource{
 type S3Controller struct {
 	context         *clusterd.Context
 	rookImage       string
-	hostNetwork     bool
+	NetworkSpec     edgefsv1beta1.NetworkSpec
 	dataDirHostPath string
 	dataVolumeSize  resource.Quantity
 	annotations     rookalpha.Annotations
@@ -67,7 +67,7 @@ type S3Controller struct {
 // NewS3Controller create controller for watching S3 custom resources created
 func NewS3Controller(
 	context *clusterd.Context, rookImage string,
-	hostNetwork bool,
+	NetworkSpec edgefsv1beta1.NetworkSpec,
 	dataDirHostPath string,
 	dataVolumeSize resource.Quantity,
 	placement rookalpha.Placement,
@@ -78,7 +78,7 @@ func NewS3Controller(
 	return &S3Controller{
 		context:         context,
 		rookImage:       rookImage,
-		hostNetwork:     hostNetwork,
+		NetworkSpec:     NetworkSpec,
 		dataDirHostPath: dataDirHostPath,
 		dataVolumeSize:  dataVolumeSize,
 		placement:       placement,
