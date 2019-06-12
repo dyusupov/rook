@@ -117,9 +117,15 @@ func GetMultusIfName(multusName string) string {
 }
 
 func ApplyMultus(networkSpec NetworkSpec, objectMeta *metav1.ObjectMeta) {
+	v := make([]string, 0, 2)
+	if len(networkSpec.ServerIfName) > 0 {
+		v = append(v, networkSpec.ServerIfName)
+	}
+	if len(networkSpec.BrokerIfName) > 0 {
+		v = append(v, networkSpec.BrokerIfName)
+	}
 	t := rook.Annotations{
-		"foo":   "bar",
-		"hello": "world",
+		"k8s.v1.cni.cncf.io/networks": strings.Join(v, ", "),
 	}
 	t.ApplyToObjectMeta(objectMeta)
 }
