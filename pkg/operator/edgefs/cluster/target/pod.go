@@ -513,6 +513,9 @@ func (c *Cluster) makeStatefulSet(replicas int32, rookImage string, dro edgefsv1
 		edgefsv1beta1.ApplyMultus(c.NetworkSpec, &statefulSet.ObjectMeta)
 	}
 	c.annotations.ApplyToObjectMeta(&statefulSet.ObjectMeta)
+	if edgefsv1beta1.IsMultusNetworkDefined(c.NetworkSpec) {
+		edgefsv1beta1.ApplyMultus(c.NetworkSpec, &statefulSet.Spec.Template.ObjectMeta)
+	}
 	c.annotations.ApplyToObjectMeta(&statefulSet.Spec.Template.ObjectMeta)
 	c.placement.ApplyToPodSpec(&statefulSet.Spec.Template.Spec)
 

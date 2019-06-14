@@ -329,10 +329,6 @@ func (c *Cluster) makeDeployment(name, clusterName, rookImage string, replicas i
 	if edgefsv1beta1.IsMultusNetworkDefined(c.NetworkSpec) {
 		edgefsv1beta1.ApplyMultus(c.NetworkSpec, &podSpec.ObjectMeta)
 	}
-
-	if edgefsv1beta1.IsMultusNetworkDefined(c.NetworkSpec) {
-		edgefsv1beta1.ApplyMultus(c.NetworkSpec, &podSpec.ObjectMeta)
-	}
 	c.annotations.ApplyToObjectMeta(&podSpec.ObjectMeta)
 	c.placement.ApplyToPodSpec(&podSpec.Spec)
 
